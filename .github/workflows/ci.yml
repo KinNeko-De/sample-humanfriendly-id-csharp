@@ -32,4 +32,4 @@ jobs:
         root_dir: .
         fail_ci_if_error: true
         verbose: true
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        token: ${{ secrets.CODECOV_TOKEN }}
