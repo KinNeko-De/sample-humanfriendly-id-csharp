@@ -31,7 +31,7 @@ public class HumanFriendlyId
     {
         for(int i = 0; i < humanFriendlyId.Length; i++)
         {
-            if(i % 4 == 0 && i != 0)
+            if(i != 0 && i % 4 == 0)
             {
                 yield return ' ';
             }
