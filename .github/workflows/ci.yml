@@ -24,7 +24,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore -c Release -p:Version=${{ env.SEMANTIC_VERSION }}
     - name: UnitTest
-      run: dotnet test *.UnitTest --no-build --no-restore -c Release -p:Version=${{ env.SEMANTIC_VERSION }} --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory=testcoverage
+      run: dotnet test *UnitTest --no-build --no-restore -c Release -p:Version=${{ env.SEMANTIC_VERSION }} --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory=testcoverage
       timeout-minutes: 10
     - name: Publish code coverage
       uses: codecov/codecov-action@v3
