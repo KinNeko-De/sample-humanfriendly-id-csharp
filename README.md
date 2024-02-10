@@ -5,4 +5,4 @@ Sample how to create a human-friendly identifier in C#
 
 ## Generate a human friendly id
 
-'dotnet run --project Sample.HumanFriendlyId/Sample.HumanFriendlyId.csproj'
+`dotnet run --project Sample.HumanFriendlyId/Sample.HumanFriendlyId.csproj`
