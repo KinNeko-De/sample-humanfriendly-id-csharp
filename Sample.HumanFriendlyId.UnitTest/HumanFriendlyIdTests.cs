@@ -13,7 +13,7 @@ public class HumanFriendlyIdTests
         var sut = new HumanFriendlyId(length);
         var actualId = sut.Id;
 
-        Assert.That(actualId.Length, Is.EqualTo(16));
+        Assert.That(actualId, Has.Length.EqualTo(length));
         Assert.That(actualId, Does.Match($"^[{allowedChars}]+$"));
     }
 
@@ -31,7 +31,7 @@ public class HumanFriendlyIdTests
 
         string regex = CreateRegex(length);
 
-        Assert.That(actualDisplayId.Length, Is.EqualTo(expectedLength));
+        Assert.That(actualDisplayId, Has.Length.EqualTo(expectedLength));
         Assert.That(actualDisplayId, Does.Match(regex));
     }
 

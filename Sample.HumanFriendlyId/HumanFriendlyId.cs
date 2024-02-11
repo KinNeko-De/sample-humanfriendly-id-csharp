@@ -2,7 +2,7 @@
 
 namespace Sample.HumanFriendlyId;
 
-public class HumanFriendlyId
+public readonly struct HumanFriendlyId
 {
     const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 
@@ -10,15 +10,15 @@ public class HumanFriendlyId
     {
     }
 
-    protected HumanFriendlyId(char[] humanFriendlyId)
+    private HumanFriendlyId(char[] humanFriendlyId)
     {
         Id = new string(humanFriendlyId);
         DisplayId = new string(GroupBySpaces(humanFriendlyId).ToArray());
     }
 
-    public string Id { get; private set; }
+    public readonly string Id { get; private init; }
 
-    public string DisplayId { get; private set; }
+    public readonly string DisplayId { get; private init; }
 
     public static HumanFriendlyId Parse(string userInput)
     {
