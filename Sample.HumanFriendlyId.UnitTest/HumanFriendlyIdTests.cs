@@ -5,11 +5,10 @@ public class HumanFriendlyIdTests
 {
     private const string allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
 
-    [Test]
-    public void Id_IsGenerated()
+    [TestCase(1)]
+    [TestCase(16)]
+    public void Id_IsGenerated(int length)
     {
-        var length = 16;
-
         var sut = new HumanFriendlyId(length);
         var actualId = sut.Id;
 
