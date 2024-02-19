@@ -5,17 +5,55 @@ on:
       - '**/**.md'
       - 'docs/**'
 env:
-  SEMANTIC_VERSION: 0.1.${{github.run_number}}
+  MAJOR_MINOR_PATCH: 0.1.0
 
 concurrency: ci-${{ github.ref }}
 
-name: sample-humanfriendlyid-csharp
+name: sample-humanfriendly-id-csharp-ci
 
 jobs:
-  build:
+  ci:
+    name: ci  
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
+    - name: Version suffix
+      id: version_suffix
+      run: |
+        if [[ ${{ github.event_name }} == 'pull_request' ]]; then
+          echo 'for pull request pipeline'
+          USE=true
+          SUFFIX=${GITHUB_HEAD_REF##*/}.${{github.run_number}}
+          EXTENSION="-${SUFFIX}"
+        else
+          if [[ ${{ github.ref }} == "refs/heads/${{ github.event.repository.default_branch }}" ]]; then
+            echo 'for default branch pipeline'
+            USE=false
+            SUFFIX=''
+            EXTENSION=''
+        else
+            echo 'for feature branch pipeline'
+            USE=true
+            SUFFIX=${GITHUB_REF##*/}.${{github.run_number}}
+            EXTENSION="-${SUFFIX}"
+          fi
+        fi
+        echo 'use_version_suffix' $USE
+        echo 'version_suffix: ' $SUFFIX
+        echo "use_version_suffix=$USE" >> $GITHUB_OUTPUT
+        echo "version_suffix=$SUFFIX" >> $GITHUB_OUTPUT
+        echo "extension=$EXTENSION" >> $GITHUB_OUTPUT
+    - name: Semantic version
+      id: semantic_version
+      run: |
+        SEMANTIC_VERSION="${{ env.MAJOR_MINOR_PATCH }}"
+        SEMANTIC_VERSION="${SEMANTIC_VERSION}${{ steps.version_suffix.outputs.extension }}"
+        echo 'MAJOR_MINOR_PATCH: ' $MAJOR_MINOR_PATCH
+        echo 'SEMANTIC_VERSION: ' $SEMANTIC_VERSION
+        echo "semantic_version=$SEMANTIC_VERSION" >> $GITHUB_OUTPUT
+        echo "major_minor_patch=$MAJOR_MINOR_PATCH" >> $GITHUB_OUTPUT
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -23,14 +61,23 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -c Release -p:Version=${{ env.SEMANTIC_VERSION }}
+      run: dotnet build --no-restore -c Release -p:Version=${{ steps.semantic_version.outputs.semantic_version }}
     - name: UnitTest
-      run: dotnet test *.UnitTest --no-build --no-restore -c Release -p:Version=${{ env.SEMANTIC_VERSION }} --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory=testcoverage
+      run: dotnet test *.UnitTest --no-build --no-restore -c Release -p:Version=${{ steps.semantic_version.outputs.semantic_version }} --verbosity normal --collect:"XPlat Code Coverage" --settings coverlet.runsettings --results-directory=testcoverage
       timeout-minutes: 10
     - name: Publish code coverage
       uses: codecov/codecov-action@v4
       with:
         root_dir: .
-        fail_ci_if_error: true
-        verbose: true
         token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
+    - name: Create semantic versioning git tag for golang
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: "refs/tags/v${{ steps.semantic_version.outputs.semantic_version }}",
+            sha: context.sha
+          })
