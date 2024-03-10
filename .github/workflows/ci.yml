@@ -5,7 +5,7 @@ on:
       - '**/**.md'
       - 'docs/**'
 env:
-  MAJOR_MINOR_PATCH: 0.1.0
+  MAJOR_MINOR_PATCH: 1.0.1
 
 concurrency: ci-${{ github.ref }}
 

@@ -6,3 +6,6 @@ Sample how to create a human-friendly identifier in C#
 ## Generate a human friendly id
 
 `dotnet run --project Sample.HumanFriendlyId/Sample.HumanFriendlyId.csproj`
+
+## Motivation
+The motivation behind this project is to described in an [article](https://medium.com/@kinnekode/e1889d6d-945d-436b-b94f-68f268285e7c-wtf-i-m-only-human-d7818de44397) 
